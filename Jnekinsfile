@@ -1,0 +1,36 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Clone') {
+            steps {
+                git 'https://github.com/suchi123smita/python-cicd-demo.git'
+				
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t python-demo .'
+            }
+        }
+
+        stage('Stop Old Container') {
+            steps {
+                sh '''
+                docker stop python-demo || true
+                docker rm python-demo || true
+                '''
+            }
+        }
+
+        stage('Run Container') {
+            steps {
+                sh 'docker run -d --name python-demo -p 5000:5000 python-demo'
+            }
+        }
+
+    }
+}
